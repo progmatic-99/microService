@@ -5,18 +5,21 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
 	"time"
+
+	"github.com/progmatic-99/microService/handlers"
 )
 
 func main() {
-	l := log.New(os.Stdout, "product-api", log.LstdFlags)
+	l := log.New(os.Stdout, "Product-API:", log.LstdFlags)
 
+	ph := handlers.NewProduct(l)
 	hh := handlers.NewHello(l)
-	gh := handlers.NewGoodbye(l)
 
 	sm := http.NewServeMux()
 	sm.Handle("/", hh)
-	sm.Handle("/goobye", gh)
+	sm.Handle("/products", ph)
 
 	s := &http.Server{
 		Addr:         ":8080",
@@ -26,9 +29,23 @@ func main() {
 		WriteTimeout: 1 * time.Second,
 	}
 
-	s.ListenAndServe()
+	go func() {
+		err := s.ListenAndServe()
+		if err != nil {
+			l.Fatal(err)
+		}
+	}()
 
-	tc, _ := context.WithDeadline(context.Background(), 30*time.Second)
+	sigChan := make(chan os.Signal)
+	signal.Notify(sigChan, os.Interrupt)
+	signal.Notify(sigChan, os.Kill)
+
+	sig := <-sigChan
+	l.Println("Received terminate, graceful shutdown", sig)
+
+	tc, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+
+	defer cancel()
 
 	s.Shutdown(tc)
 }

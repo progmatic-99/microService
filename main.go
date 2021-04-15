@@ -15,11 +15,9 @@ func main() {
 	l := log.New(os.Stdout, "Product-API:", log.LstdFlags)
 
 	ph := handlers.NewProduct(l)
-	hh := handlers.NewHello(l)
 
 	sm := http.NewServeMux()
-	sm.Handle("/", hh)
-	sm.Handle("/products", ph)
+	sm.Handle("/", ph)
 
 	s := &http.Server{
 		Addr:         ":8080",

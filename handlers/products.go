@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
@@ -73,6 +74,18 @@ func (p Products) MiddlewareValidateProduct(next http.Handler) http.Handler {
 		if err != nil {
 			p.l.Println("Error deserializing product.")
 			http.Error(rw, "Error deserializing product.", http.StatusBadRequest)
+			return
+		}
+
+		// Validating JSON
+		err = pd.Validate()
+		if err != nil {
+			p.l.Println("Error validating product.")
+			http.Error(
+				rw,
+				fmt.Sprintf("Error validating product %s", err),
+				http.StatusBadRequest,
+			)
 			return
 		}
 

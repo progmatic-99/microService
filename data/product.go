@@ -51,6 +51,7 @@ func UpdateProduct(id int, prod *Product) error {
 }
 
 var ErrProdNotFound = fmt.Errorf("Product not found.")
+var ProdListEmpty = fmt.Errorf("Product list empty.")
 
 func findProduct(id int) (*Product, int, error) {
 	for i, p := range productList {
@@ -66,6 +67,20 @@ type Products []*Product
 
 func GetProducts() Products {
 	return productList
+}
+
+func DeleteProduct(id int) error {
+	_, index, err := findProduct(id)
+	if err != nil {
+		return ErrProdNotFound
+	}
+
+	if len(productList) >= 1 {
+		productList = append(productList[:index], productList[index+1:]...)
+		return nil
+	} else {
+		return ProdListEmpty
+	}
 }
 
 func (p *Products) ToJson(w io.Writer) error {

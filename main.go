@@ -31,6 +31,9 @@ func main() {
 	postRouter.HandleFunc("/", ph.AddProduct)
 	postRouter.Use(ph.MiddlewareValidateProduct)
 
+	deleteRouter := sm.Methods(http.MethodDelete).Subrouter()
+	deleteRouter.HandleFunc("/{id:[0-9]+}", ph.DeleteProduct)
+
 	s := &http.Server{
 		Addr:         ":8080",
 		Handler:      sm,
@@ -40,7 +43,7 @@ func main() {
 	}
 
 	go func() {
-		l.Println("Starting server on port 9090")
+		l.Println("Starting server on port 8080")
 
 		err := s.ListenAndServe()
 		if err != nil {

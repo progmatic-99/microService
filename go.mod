@@ -15,7 +15,9 @@ require (
 	github.com/gorilla/mux v1.8.0
 	github.com/leodido/go-urn v1.2.1 // indirect
 	github.com/pelletier/go-toml v1.9.0 // indirect
+	github.com/progmatic-99/gRPC v0.0.0-20210428170544-c87841ec7763
 	golang.org/x/net v0.0.0-20210415231046-e915ea6b2b7d // indirect
 	golang.org/x/sys v0.0.0-20210419170143-37df388d1f33 // indirect
 	golang.org/x/tools v0.1.0
+	google.golang.org/grpc v1.37.0
 )

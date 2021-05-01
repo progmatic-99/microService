@@ -11,13 +11,25 @@ import (
 	"github.com/go-openapi/runtime/middleware"
 	gohandlers "github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	currency "github.com/progmatic-99/gRPC/proto/currency"
 	"github.com/progmatic-99/microService/handlers"
+	"google.golang.org/grpc"
 )
 
 func main() {
 	l := log.New(os.Stdout, "Product-API:", log.LstdFlags)
 
-	ph := handlers.NewProduct(l)
+	conn, err := grpc.Dial("localhost:8080")
+	if err != nil {
+		panic(err)
+	}
+
+	defer conn.Close()
+
+	// create client for currency server
+	cc := currency.NewCurrencyClient(conn)
+
+	ph := handlers.NewProduct(l, cc)
 
 	sm := mux.NewRouter()
 
@@ -47,7 +59,7 @@ func main() {
 	ch := gohandlers.CORS(gohandlers.AllowedOrigins([]string{"http:localhost:3000"}))
 
 	s := &http.Server{
-		Addr:         ":8080",
+		Addr:         ":8000",
 		Handler:      ch(sm),
 		IdleTimeout:  120 * time.Second,
 		ReadTimeout:  1 * time.Second,

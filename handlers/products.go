@@ -21,11 +21,13 @@ import (
 	"log"
 	"net/http"
 
+	currency "github.com/progmatic-99/gRPC/proto/currency"
 	"github.com/progmatic-99/microService/data"
 )
 
 type Products struct {
-	l *log.Logger
+	l  *log.Logger
+	cc currency.CurrencyClient
 }
 
 // A list of products
@@ -47,8 +49,8 @@ type productIDParam struct {
 	ID int `json:"id"`
 }
 
-func NewProduct(l *log.Logger) *Products {
-	return &Products{l}
+func NewProduct(l *log.Logger, cc currency.CurrencyClient) *Products {
+	return &Products{l, cc}
 }
 
 type KeyProduct struct{}
